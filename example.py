@@ -31,9 +31,9 @@ def crawlingfunction():
     for quote in quotes:
         one = quote
         logging.info("entering to loop")
-        text += quote.find("span", class_="text").get_text()
+        text = quote.find("span", class_="text").get_text()
 
-        author += quote.find("small", class_="author").get_text()
+        author = quote.find("small", class_="author").get_text()
     logging.info("               ")
     logging.info("               ")
     logging.info("               ")
@@ -47,4 +47,44 @@ def crawlingfunction():
     print(f"{text} — {author}")
 
 
-crawlingfunction()
+# crawlingfunction()
+
+
+
+
+
+
+
+def scrape_news_headlines():
+    logging.info("Entering to scrape_news_headlines::::::::")
+    url = "https://www.thehindu.com/"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # raise error for bad responses
+    except requests.RequestException as e:
+        print(f"Error fetching news site: {e}")
+        return
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Find headlines - adjust based on structure
+    headlines = soup.find_all("h1", class_="title") 
+    logging.info(f"headlines{headlines}") # Example class
+
+    print("Top News Headlines:\n")
+    for idx, headline in enumerate(headlines[:10], start=1):  # Just top 10
+        logging.info(f"headline{headline}")
+        logging.info(f"idx{idx}")
+        title = headline.find('a').get_text(strip=True)
+        # link = headline.get('href')
+        print(f"{idx}. {title}")
+        # print(f"   Link: {link}\n")
+
+
+
+scrape_news_headlines()
+
+
+
+
+
