@@ -36,25 +36,11 @@ def crawlingfunction():
         text = quote.find("span", class_="text").get_text()
 
         author = quote.find("small", class_="author").get_text()
-    logging.info("               ")
-    logging.info("               ")
-    logging.info("               ")
-    logging.info("               ")
     logging.info(f"one{one}")
-    logging.info("               ")
-    logging.info("               ")
-    logging.info("               ")
-
-
     print(f"{text} — {author}")
 
 
 # crawlingfunction()
-
-
-
-
-
 
 
 def scrape_news_headlines():
@@ -85,44 +71,6 @@ def scrape_news_headlines():
 
 
 # scrape_news_headlines()
-
-
-
-
-def getVegAndPricechatgpt():
-    logging.info("Entering getVegAndPrice")
-    try:
-        url = 'https://www.livechennai.com/Vegetable_price_chennai.asp'
-        res = requests.get(url)
-        res.raise_for_status()  # Raise error if status not 200
-
-        soup = BeautifulSoup(res.text, 'html.parser')
-        logging.info(f"soup{soup}")
-        # Find the specific table with vegetable prices
-        table = soup.find("table", class_="table table-bordered table-striped gold-rates")
-        if not table:
-            logging.warning("Vegetable price table not found.")
-            return
-
-        rows = table.find_all('tr')[2:]  # Skip header rows
-
-        for row in rows:
-            cols = row.find_all('td')
-            if len(cols) == 3:
-                veg_img = cols[0].find('img')['src']
-                veg_name = cols[1].get_text(strip=True).split(':')[0]
-                veg_price = cols[2].get_text(strip=True)
-                print(f"{veg_name}: ₹{veg_price}")
-                # Optional: print image path if needed
-                # print(f"Image: {veg_img}")
-
-    except Exception as e:
-        print(f"Error: {e}")
-
-
-
-
-
 
 
 def getVegAndPrice():
