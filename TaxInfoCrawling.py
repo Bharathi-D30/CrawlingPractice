@@ -50,8 +50,27 @@ def IncomeTaxInfoFrom():
 
 
 
-IncomeTaxInfoFrom()
+# IncomeTaxInfoFrom()
 
 
+def IncomeTaxInfoByRequestMethod():
+  logging.info("Entering To IncomeTaxInfoByRequestMethod")
+  url = 'https://www.incometax.gov.in/iec/foportal/latest-news'
+  res = requests.get(url)
+  if res.status_code == 200:
+    soup = BeautifulSoup(res.text,'html.parser')
+    logging.info(f"soup{soup}")
+    all_list = soup.find_all('div',class_='views-row')
+    count = 0 
+    for item in all_list:
+      # print(count+1)
+      # logging.info(item)
+      date = item.find('div',class_='up-date').text
+      rules = item.find('p').get_text(strip=True)
+      print(f"{count+1}.Upadted Date-{date}\n{rules}")
+      count =count + 1
+  else:
+    logging.info(f"status Code ---{res.status_code}")
 
 
+IncomeTaxInfoByRequestMethod()
