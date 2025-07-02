@@ -73,4 +73,33 @@ def IncomeTaxInfoByRequestMethod():
     logging.info(f"status Code ---{res.status_code}")
 
 
-IncomeTaxInfoByRequestMethod()
+# IncomeTaxInfoByRequestMethod()
+
+
+
+
+def MultipleUrls(add_url):
+  logging.info("Entering to MultipleUrls")
+  url = 'https://www.incometax.gov.in/iec/foportal/latest-news?year=' + add_url
+  print(url)
+  res = res = requests.get(url)
+  print("res:::::::",res)
+  soup = BeautifulSoup(res.text,'html.parser')
+
+
+  all_item_list = soup.find_all('div',class_='views-row')
+  print("all_item_list:::::",all_item_list)
+
+  count =1
+  for item in all_item_list:
+    print(count)
+    date = item.find('div',class_='up-date').text
+    rules = item.find('p').get_text(strip=True)
+    print(f"{count}.Upadted Date-{date}\n{rules}")
+    count = count + 1
+
+MultipleUrls('2017')
+
+
+
+
