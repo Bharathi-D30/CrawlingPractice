@@ -112,6 +112,14 @@ def getVegAndPrice():
 
 
 
+
+
+
+
+
+
+
+
 getVegAndPrice()
 
 
