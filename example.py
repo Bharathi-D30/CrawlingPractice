@@ -109,6 +109,12 @@ def getVegAndPrice():
 
     except Exception as e:
         print(f"Error: {e}")
-        
+
+
+
 getVegAndPrice()
+
+
+
+
   
