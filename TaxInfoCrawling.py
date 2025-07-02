@@ -76,29 +76,56 @@ def IncomeTaxInfoByRequestMethod():
 # IncomeTaxInfoByRequestMethod()
 
 
+def MultipleUrlsNew():
+  logging.info("Entering Into MultipleUrls Function")
+  main_obj = []  # Should be a list to use append
+  url = 'https://www.incometax.gov.in/iec/foportal/latest-news'
+  next_button_url_href = ""  # start with empty string, not a space
+  url_list = []
+  count = 1
+  flag = False
+
+  while True:
+      # Stop if URL already processed
+      if next_button_url_href in url_list and next_button_url_href != "":
+          break
+      else:
+          flag = True
+          url_list.append(next_button_url_href)
+
+      if flag:
+          current_url = url + next_button_url_href
+      else:
+          current_url = url
+
+      res = requests.get(current_url)
+      soup = BeautifulSoup(res.text,'html.parser')
+      all_item_list = soup.find_all('div',class_='views-row')
+      # logging.info(f'soup{soup}')
+      next_button = soup.find('li',class_='pager__item pager__item--next')
+      # logging.info(f'next_button{next_button}')
+      next_button_url = next_button.find('a')
+      next_button_url_href = next_button_url['href']
+      logging.info('next_button_url_href',next_button_url_href)
+      for item in all_item_list:
+        # print(count)
+        date = item.find('div',class_='up-date').text
+        rules = item.find('p').get_text(strip=True)
+        # print(f"{count}.Upadted Date-{date}\n{rules}")
+
+        main_obj.append({'count':count,'date':date,'rules':rules})
+        count = count + 1
+
+      # print('main_obj:', main_obj)
+  
+  for obj in main_obj:
+    print(obj['count'],'Upadted Date'," ",obj['date'],'Rules'," ",obj['rules'])
 
 
-def MultipleUrls(add_url):
-  logging.info("Entering to MultipleUrls")
-  url = 'https://www.incometax.gov.in/iec/foportal/latest-news?year=' + add_url
-  print(url)
-  res = res = requests.get(url)
-  print("res:::::::",res)
-  soup = BeautifulSoup(res.text,'html.parser')
+    
+    
+MultipleUrlsNew()
 
-
-  all_item_list = soup.find_all('div',class_='views-row')
-  print("all_item_list:::::",all_item_list)
-
-  count =1
-  for item in all_item_list:
-    print(count)
-    date = item.find('div',class_='up-date').text
-    rules = item.find('p').get_text(strip=True)
-    print(f"{count}.Upadted Date-{date}\n{rules}")
-    count = count + 1
-
-MultipleUrls('2017')
 
 
 
