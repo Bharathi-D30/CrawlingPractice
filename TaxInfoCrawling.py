@@ -124,11 +124,49 @@ def MultipleUrlsNew():
 
     
     
-MultipleUrlsNew()
+# MultipleUrlsNew()
 
 
+
+def BlogCrawling():
+  logging.info("Entering to BlogCrawling Function")
+
+  url = 'https://blog.saginfotech.com/india-first-nationwide-household-income-survey-2026-improve-tax-policy'
+  res = requests.get(url)
+  soup = BeautifulSoup(res.text,'html.parser')
+
+  title = soup.find('h1',class_='page-title').get_text()
+  print(f"=============={title}==============")
+  content = soup.find('div',class_='entry-content')
+  # print(content)
+  if content:
+    # Collect clean text parts
+    full_text = ""
+    for tag in content.find_all(True):  # True = all tags
+        if tag.name in ['h1', 'h2', 'h3']:
+            heading = tag.get_text(strip=True)
+            full_text += f"\n\n=== {heading} ===\n" 
+        elif tag.name == 'p':
+            paragraph = tag.get_text(strip=True)
+            full_text += f"{paragraph}\n"
+        elif tag.name == 'li':
+            list_item = tag.get_text(strip=True)
+            full_text += f"- {list_item}\n"
+
+    print(full_text)
+  else:
+    print("No content found.")
+
+  # all_content = content.find_all('p')
+
+  # for item in all_content:
+  #   line_content = item.text
+  #   print(line_content)
+  #   print("\n")
+
+  logging.info("Exiting From BlogCrawling Fucntion")
    
 
-
+BlogCrawling()
 
 
