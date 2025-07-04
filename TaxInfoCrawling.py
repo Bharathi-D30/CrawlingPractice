@@ -4,6 +4,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
 from bs4 import BeautifulSoup
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 
@@ -26,8 +28,8 @@ def IncomeTaxInfoFrom():
   all_news = []
 
   # while True:
-  time.sleep(2)  # Wait for news items to load
-
+  time.sleep(2)  # Wait for news items to load 
+    
   soup = BeautifulSoup(driver.page_source,'html.parser')
   news_items = soup.find_all('div',class_="views-row")
 
@@ -167,6 +169,102 @@ def BlogCrawling():
   logging.info("Exiting From BlogCrawling Fucntion")
    
 
-BlogCrawling()
+# BlogCrawling()
 
 
+def ActsCrawling():
+  logging.info("Entering to ActCrawling")
+
+  options = webdriver.ChromeOptions()
+  options.add_argument("--headless")
+  options.add_argument("--log-level=3")
+  driver = webdriver.Chrome(options=options)
+  url = 'https://incometaxindia.gov.in/Pages/acts/index.aspx'
+
+  driver.get(url)
+  time.sleep(2)
+
+
+
+  # soup = BeautifulSoup(driver.page_source,'html.parser')
+
+  all_acts_div = driver.find_elements(By.CLASS_NAME,'search_result')
+  print(f"Total Acts::{len(all_acts_div)}")
+
+  for i,acts in enumerate(all_acts_div):
+    Act = acts.find_element(By.CSS_SELECTOR,'.search_title a').text
+    print(f"{i+1}.{Act}")
+
+  driver.quit()
+
+# ActsCrawling()
+
+
+def ActsChapterList():
+  logging.info(f"Entering to ActsChapterList::::::")
+  options = webdriver.ChromeOptions()
+  options.add_argument("--headless")
+  driver = webdriver.Chrome(options=options)
+
+  url = 'https://incometaxindia.gov.in/pages/acts/income-tax-act.aspx'
+
+  driver.get(url)
+
+  WebDriverWait(driver, 10).until(
+      EC.presence_of_element_located((By.TAG_NAME, "table"))
+  )
+
+  all_tables = driver.find_elements(By.TAG_NAME, 'table')
+
+  for table in all_tables:
+    try:
+        # Check if the table has an id and ends with 'SearchParameters'
+        table_id = table.get_attribute('id')
+        if table_id and table_id.endswith('SearchParameters'):
+            # Find all rows in the table
+            rows = table.find_elements(By.TAG_NAME, 'tr')
+            for row in rows:
+                if 'Chapter Wise' in row.text:
+                    # Find and click the radio button inside this row
+                    radio_button = row.find_element(By.TAG_NAME, 'input')
+                    logging.info(f"radio_button :::::::::::::::::::::{radio_button}")
+                    radio_button.click()
+                    # time.sleep(2)
+                    
+                    # time.sleep(2)
+                    WebDriverWait(driver,10).until(
+                      EC.presence_of_element_located((By.CLASS_NAME,'dt-pages-colls-2'))
+                    )
+                    logging.info("Clicked on 'Chapter Wise' option")
+                    
+                    main_div = driver.find_element(By.CLASS_NAME,'dt-pages-colls-2')
+                    # logging.info(f"main_div  {main_div}")
+
+                    chapter_list = main_div.find_elements(By.TAG_NAME , 'li')
+                    for i,chapter in enumerate(chapter_list):
+                      # logging.info(f"chapter   {chapter}")
+                      try:
+                          content = chapter.find_element(By.CLASS_NAME,'dt-ui-info-h1')
+                          print(f"{i}. {content.text.strip()}")
+                      except Exception as e:
+                          logging.warning(f"Skipping chapter {i} due to missing span: {e}")
+
+
+
+                      # Once clicked, exit loop
+    except Exception as e:
+        logging.warning(f"Error processing table: {e}")
+
+    
+
+  logging.info("Exiting from ActsChapterList Function")
+
+
+
+
+ActsChapterList()
+
+
+
+
+  
